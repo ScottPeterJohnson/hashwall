@@ -9,22 +9,31 @@ interface FullOptions extends BaseOptions {
     onDone : (results: Array<number>) => void;
 }
 
-interface Call {
-    callId : number,
+interface StartCall {
+    callId : CallId,
+    type: 'start',
     options : BaseOptions
 }
 
+interface StopCall {
+    callId : CallId,
+    type: 'stop'
+}
+
+type Call = StartCall | StopCall;
+
 interface DoneResponse {
-    callId : number
+    callId : CallId
     type: 'done'
     results: number[]
 }
 
 interface ProgressResponse {
-    callId : number
+    callId : CallId
     type: 'progress',
     current : number,
     total : number
 }
 
 type CallResponse = DoneResponse | ProgressResponse;
+type CallId = number;

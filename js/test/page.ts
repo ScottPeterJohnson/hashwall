@@ -1,4 +1,4 @@
-import hashwall from "../hashwall";
+import hashwall, {stop} from "../hashwall";
 // @ts-ignore
 import {sha256} from "js-sha256";
 // @ts-ignore
@@ -32,7 +32,18 @@ function updateUi(){
 
 updateUi();
 
+function updateProgress(current : number, total : number){
+    const percent = Math.trunc((current / total) * 100);
+    progressSlider.value = ""+percent;
+    progressText.innerText = `${current} out of ${total} (${percent}%)`;
+}
+
+let calculationInProgress : CallId | null = null;
+
 startButton.addEventListener("click", ()=>{
+    if(calculationInProgress != null){
+        stop(calculationInProgress);
+    }
     locked = true;
     inProgress = true;
     updateUi();
@@ -43,7 +54,9 @@ startButton.addEventListener("click", ()=>{
         difficulty: Number.parseInt(difficulty.value)
     };
 
-    hashwall({
+    updateProgress(0, baseOptions.repetitions);
+
+    calculationInProgress = hashwall({
         //The server should generate a target, repetition count, and difficulty and relay them to the client, who
         //passes them to hashwall here.
         ...baseOptions,
@@ -57,9 +70,7 @@ startButton.addEventListener("click", ()=>{
             verifyResults(baseOptions, results);
         },
         onProgress(current, total){
-            const percent = Math.trunc((current / total) * 100);
-            progressSlider.value = ""+percent;
-            progressText.innerText = `${current} out of ${total} (${percent}%)`;
+            updateProgress(current, total);
         }
     });
 });
@@ -87,6 +98,7 @@ function verifyResults(baseOptions : BaseOptions, results : number[]){
                 throw Error("Does not match");
             }
         }
+        current = results[repetition];
     }
     console.log("Passed!");
 }

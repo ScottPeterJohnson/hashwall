@@ -1,16 +1,30 @@
-export default function hashwall(options : FullOptions){
+export default function hashwall(options : FullOptions) : CallId {
     ensureInitialized();
     const id = callId++;
     callbacks[id] = options;
     worker!!.postMessage({
+        type: 'start',
         options: {
             target: options.target,
             repetitions: options.repetitions,
             difficulty: options.difficulty
         } as BaseOptions,
         callId: id
-    } as Call);
+    } as StartCall);
+    return id;
 }
+
+export function stop(callId : CallId){
+    if(worker != null){
+        worker!!.postMessage({
+            type: 'stop',
+            callId: callId
+        } as StopCall);
+        delete callbacks[callId];
+    }
+}
+
+
 
 let callId = 0;
 let worker : Worker|null = null;
@@ -22,14 +36,16 @@ function ensureInitialized(){
         worker.addEventListener('message', (event)=>{
             const data = event.data as CallResponse;
             const opts = callbacks[data.callId];
-            switch(data.type){
-                case "done":
-                    opts.onDone(data.results);
-                    delete callbacks[data.callId];
-                    break;
-                case "progress":
-                    opts.onProgress && opts.onProgress(data.current, data.total);
-                    break;
+            if(opts){
+                switch(data.type){
+                    case "done":
+                        opts.onDone(data.results);
+                        delete callbacks[data.callId];
+                        break;
+                    case "progress":
+                        opts.onProgress && opts.onProgress(data.current, data.total);
+                        break;
+                }
             }
         });
     }
