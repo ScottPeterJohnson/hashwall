@@ -20,7 +20,7 @@
   <body>
     <h1>Hashwall</h1>
     <p>
-        Hashwall is a library to implement spam and rate limiting (what you'd use a CAPTCHA for) by
+        Hashwall is a web library to implement spam and rate limiting (what you'd use a CAPTCHA for) by
         using proof of work instead.
     </p>
     <p>
@@ -32,12 +32,13 @@
     <h2>Why?</h2>
     <p>
         Traditional hard-to-read text CAPTCHAs no longer work, and Google's ReCAPTCHA is a dubious thing to force on users.
-        This is a pretty simple solution.
+        This is a pretty simple alternative.
     </p>
 
     <h2>Won't this impact mobile users?</h2>
     <p>
-        Probably. Phones have decent performance these days, though. This will burn battery and make them run hot.
+        Probably. Phones have decent single-threaded performance these days, though.
+        This may still burn battery and make them run hot.
     </p>
 
     <h2>Won't users get bored waiting?</h2>
@@ -58,7 +59,17 @@
     <p>
         This is an experimental project, so no strong guarantees.
         I think the general idea is sound (various cryptocurrencies and hashcash use the same basic idea), but
-        cryptography is pretty difficult. Contributions welcome!
+        cryptography is pretty difficult.
+    </p>
+
+    <h2>But how do I verify the hash on the server?</h2>
+    <p>
+        You may need to write that part yourself, but it should be fairly easy.
+        <a href="https://github.com/ScottPeterJohnson/hashwall/blob/46c403e7892e2f8ba32b1c837be62f72c93db9a9/js/test/page.ts#L79">Here's an example implementation for Node.</a>
+    </p>
+    <p>
+        Contributions are welcome.
+        <a href="https://github.com/ScottPeterJohnson/hashwall">See here.</a>
     </p>
 
     <h2>Try It</h2>
