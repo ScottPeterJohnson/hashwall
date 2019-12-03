@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Hashwall</title>
+      <style type="text/css">
+          body {
+              margin: 40px auto;
+              max-width: 650px;
+              line-height: 1.6;
+              font-size: 18px;
+              color: #444;
+              padding: 0 10px
+          }
+          h1, h2, h3 {
+              line-height: 1.2
+          }
+      </style>
+  </head>
+  <body>
+    <h1>Hashwall</h1>
+    <p>
+        Hashwall is a library to implement spam and rate limiting (what you'd use a CAPTCHA for) by
+        using proof of work instead.
+    </p>
+    <p>
+        Basically, a user's computer has to solve a hash-based math puzzle of configurable difficulty
+        and submit the proof to your server. You can tune the difficulty to make the math puzzle take more time,
+        and therefore make it costly for spammers to abuse your service.
+    </p>
+
+    <h2>Why?</h2>
+    <p>
+        Traditional hard-to-read text CAPTCHAs no longer work, and Google's ReCAPTCHA is a dubious thing to force on users.
+        This is a pretty simple solution.
+    </p>
+
+    <h2>Won't this impact mobile users?</h2>
+    <p>
+        Probably. Phones have decent performance these days, though. This will burn battery and make them run hot.
+    </p>
+
+    <h2>Won't users get bored waiting?</h2>
+    <p>
+        Some of them.
+        If your users aren't really interested enough in what you're trying to protect to wait a few minutes for it, then
+        this probably isn't a good solution for you.
+    </p>
+
+    <h2>How It Works</h2>
+    <p>
+        The hash computation is done in WebAssembly for performance.
+        Basically, given a target T, the client must find a number N such that hash(N,T) starts with difficulty (D) 0's.
+        That number N is then used as the new target for a number of repetitions, which allow showing consistent progress
+        to the user.
+    </p>
+    <h3>Is this cryptographically secure?</h3>
+    <p>
+        This is an experimental project, so no strong guarantees.
+        I think the general idea is sound (various cryptocurrencies and hashcash use the same basic idea), but
+        cryptography is pretty difficult. Contributions welcome!
+    </p>
+
+    <h2>Try It</h2>
+    <div>
+        <p>
+            Difficulty: <input type="number" id="difficulty" value="14"/>
+        </p>
+        <p>
+            Note that the amount of time hashwall takes doubles with every increment of difficulty.
+        </p>
+    </div>
+    <div>
+        <p>
+            Repetitions: <input type="number" id="repetitions" value="1000"/>
+        </p>
+        <p>
+            Time taken is proportional to number of repetitions.
+        </p>
+    </div>
+    <button id="start">Go</button>
+
+    <div id="progress">
+        <progress id="progressSlider" max="100"></progress>
+        <div id="progressText"></div>
+    </div>
+
+    <div id="locked">
+        <span style="font-size:30px">🔒</span>
+        Locked!
+    </div>
+    <div id="unlocked">
+        <span style="font-size:30px">🔓</span>
+        Unlocked!
+    </div>
+
+
+    <script src="page.js"></script>
+
+  </body>
+</html>
