@@ -1,4 +1,3 @@
-// @ts-ignore
 const wasm = import("../pkg/index.js").catch(console.error);
 
 const inProgress : Set<number> = new Set();
@@ -19,9 +18,11 @@ async function calculate(data : StartCall){
     const results = [];
     let target = options.target;
     for(let i=0;i<options.repetitions;i++){
-        const result : number = (module as any).hash(target, options.difficulty);
-        results.push(result);
-        target = result;
+        const result : string = (module as any).hash(target, options.difficulty);
+        const [counter, nextTarget] = result.split("|");
+        results.push(counter);
+
+        target = nextTarget;
 
         await new Promise(resolve => setTimeout(resolve, 0)); //Allows an interrupt
         if(!inProgress.has(data.callId)){

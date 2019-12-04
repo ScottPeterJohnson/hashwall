@@ -1,12 +1,12 @@
 interface BaseOptions {
-    target : number
+    target : HexString
     repetitions : number
     difficulty : number
 }
 
 interface FullOptions extends BaseOptions {
     onProgress? : (current : number, total : number)=>void;
-    onDone : (results: Array<number>) => void;
+    onDone : (results: Array<HexString>) => void;
 }
 
 interface StartCall {
@@ -25,7 +25,7 @@ type Call = StartCall | StopCall;
 interface DoneResponse {
     callId : CallId
     type: 'done'
-    results: number[]
+    results: HexString[]
 }
 
 interface ProgressResponse {
@@ -37,3 +37,5 @@ interface ProgressResponse {
 
 type CallResponse = DoneResponse | ProgressResponse;
 type CallId = number;
+
+type HexString = string;

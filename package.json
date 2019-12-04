@@ -1,11 +1,11 @@
 {
   "author": "Scott Johnson",
   "name": "hashwall",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "dist/hashwall.js",
   "scripts": {
-    "build": "rimraf dist pkg && webpack",
-    "start": "rimraf dist pkg && webpack-dev-server --open -d",
+    "build": "webpack",
+    "start": "webpack-dev-server --open -d",
     "test": "cargo test && wasm-pack test --headless"
   },
   "devDependencies": {

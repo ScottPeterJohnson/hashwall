@@ -48,8 +48,14 @@ startButton.addEventListener("click", ()=>{
     inProgress = true;
     updateUi();
 
+    //Generate 64 random bytes into a hex string
+    const view = new Uint8Array(new ArrayBuffer(8));
+    crypto.getRandomValues(view);
+    const targetHex = Array.from(view).map(b => b.toString(16).padStart(2, "0")).join("");
+
+
     const baseOptions = {
-        target: Math.floor(Math.random() * 2147483647),
+        target: targetHex,
         repetitions: Number.parseInt(repetitions.value),
         difficulty: Number.parseInt(difficulty.value)
     };
@@ -76,29 +82,39 @@ startButton.addEventListener("click", ()=>{
 });
 
 //Example server verification in JS
-function verifyResults(baseOptions : BaseOptions, results : number[]){
+function verifyResults(baseOptions : BaseOptions, results : string[]){
     let current = baseOptions.target;
     if(results.length != baseOptions.repetitions){
         throw Error()
     }
 
-    const buffer = new ArrayBuffer(8);
+    const buffer = new ArrayBuffer(16);
     const arr = new DataView(buffer);
 
     for(let repetition = 0; repetition < baseOptions.repetitions; repetition++){
         const hash = sha256.create();
-        arr.setInt32(0, current, true);
-        arr.setInt32(4, results[repetition], true);
+
+        putHexStringInDataView(arr, 0, current);
+        putHexStringInDataView(arr, 8, results[repetition]);
 
         hash.update(buffer);
         //Languages with better manipulation of binary should probably use that, instead of translating between strings.
-        const check = hexToBinary(hash.hex());
+        const hex = hash.hex();
+        const check = hexToBinary(hex);
         for(let d = 0; d < baseOptions.difficulty; d++){
             if(check[d] != "0"){
                 throw Error("Does not match");
             }
         }
-        current = results[repetition];
+        current = hex.substring(48);
     }
     console.log("Passed!");
+}
+
+function putHexStringInDataView(view : DataView, offset : number, hex : string){
+    for(let i=0;i<hex.length;i+=2){
+        const byte = Number.parseInt(hex[i] + hex[i+1], 16);
+        view.setUint8(offset, byte);
+        offset += 1;
+    }
 }

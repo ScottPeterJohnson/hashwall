@@ -1,7 +1,6 @@
 use wasm_bindgen::prelude::*;
 use sha2::{Sha256, Digest};
 
-
 // When the `wee_alloc` feature is enabled, this uses `wee_alloc` as the global
 // allocator.
 //
@@ -23,24 +22,31 @@ pub fn main_js() -> Result<(), JsValue> {
 }
 
 #[wasm_bindgen]
-pub fn hash(target : u32, difficulty : u32) -> Result<u32, JsValue> {
-    let mut counter : u32 = 0;
+pub fn hash(target : String, difficulty : i32) -> Result<String, JsValue> {
+    let target = match hex::decode(target) {
+        Ok(num) => num,
+        Err(_) => return Err(JsValue::from_str("Unacceptable parameter"))
+    };
+    let target : &[u8] = target.as_slice();
+
+    let mut counter : u64 = 0;
 
     loop {
         let mut hasher = Sha256::default();
-        hasher.input(&target.to_le_bytes());
+        hasher.input(target);
         hasher.input(&counter.to_le_bytes());
         let hash = hasher.result();
-
         if verify(&hash, difficulty){
-            return Ok(counter);
+            let mut next_target: [u8;8] = [0;8];
+            next_target.copy_from_slice(hash[24..32].as_ref());
+            return Ok(format!("{}|{}", hex::encode(counter.to_le_bytes()), hex::encode(next_target)));
         }
 
         counter += 1;
     }
 }
 
-fn verify(hash : &[u8], difficulty : u32) -> bool {
+fn verify(hash : &[u8], difficulty : i32) -> bool {
     for d in 0..(difficulty/8) {
         let byte = hash[d as usize];
         if byte != 0 {

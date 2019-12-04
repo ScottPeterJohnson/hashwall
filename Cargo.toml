@@ -32,6 +32,7 @@ wee_alloc = { version = "0.4.2", optional = true }
 
 # rust-crypto-wasm = "0.3.1"
 sha2 = "^0.8.0"
+hex = "0.4.0"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
