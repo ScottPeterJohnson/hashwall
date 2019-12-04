@@ -48,24 +48,27 @@
         this probably isn't a good solution for you.
     </p>
 
-    <h2>How It Works</h2>
+    <h2>How does it work?</h2>
     <p>
-        The hash computation is done in WebAssembly for performance.
+        The hash computation (SHA-256) is done in WebAssembly for performance.
         Basically, given a target T, the client must find a number N such that hash(N,T) starts with difficulty (D) 0's.
-        That number N is then used as the new target for a number of repetitions, which allow showing consistent progress
-        to the user.
+        To show consistent progress to the user, we use a number of repetitions to effectively chain the hash, with part
+        of the end of hash(N,T) becoming the new target.
     </p>
     <h3>Is this cryptographically secure?</h3>
     <p>
-        This is an experimental project, so no strong guarantees.
+        This is an experimental project, so not likely.
         I think the general idea is sound (various cryptocurrencies and hashcash use the same basic idea), but
         cryptography is pretty difficult.
+    </p>
+    <p>
+        No effort has been made to make this ASIC or GPU resistant.
     </p>
 
     <h2>But how do I verify the hash on the server?</h2>
     <p>
         You may need to write that part yourself, but it should be fairly easy.
-        <a href="https://github.com/ScottPeterJohnson/hashwall/blob/46c403e7892e2f8ba32b1c837be62f72c93db9a9/js/test/page.ts#L79">Here's an example implementation for Node.</a>
+        <a href="https://github.com/ScottPeterJohnson/hashwall/blob/46c403e7892e2f8ba32b1c837be62f72c93db9a9/js/test/page.ts#L85">Here's an example implementation for Node.</a>
     </p>
     <p>
         Contributions are welcome.
